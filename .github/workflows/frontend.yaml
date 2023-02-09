@@ -1,7 +1,8 @@
 name: Deployment Pipeline Angular
 on:
   push:
-    branches: [ develop ]
+    tags:
+      - '*:+v[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
     inputs:
       tags:
@@ -9,32 +10,16 @@ on:
         required: true 
         type: string
 jobs:
-  tagging:
-    name: Getting the Tag
-    runs-on: ubuntu-20.04
-    outputs:
-      TAG: ${{ steps.tag.outputs.TAG }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Getting the Tag
-        id: tag
-        run: |
-          TAG=$(git describe --tags --abbrev=0)
-          if [ ${{ github.event_name }} == 'workflow_dispatch' ]; then
-            echo "TAG=${{ github.event.inputs.tags }}" >> $GITHUB_OUTPUT
-          elif [ ${{ github.event_name }} == 'push' ] && [  TAG=~ "v-" ]; then
-            echo "TAG=$TAG" >> $GITHUB_OUTPUT
-          else
-            echo "Tagging Failed"
-            throw "Tagging Failed"
-          fi
-
   build:
     name: Build Angular Application
-    needs: [tagging]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+      - name: Exit if not on develop branch
+        if: endsWith(github.event.base_ref, 'develop') == false
+        run: exit -1
       - name: Getting Enviromnet Variables
         run: |
           echo ${{ needs.tagging.outputs.TAG}}
@@ -48,7 +33,9 @@ jobs:
       name: dev
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
       - name: Starting Angular Application Building
         uses: ./.github/actions/frontend/deploy
         with:
@@ -63,7 +50,9 @@ jobs:
       name: test
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
       - name: Starting Angular Application Building
         uses: ./.github/actions/frontend/deploy
         with:
