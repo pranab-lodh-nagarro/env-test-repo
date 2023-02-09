@@ -1,6 +1,11 @@
 name: Build Angular Application
 description: Build Angular Application
 
+inputs:
+  IMAGE_TAG:
+    required: true
+    description: The Docker Image Tag
+
 runs:
   using: composite
   steps:
@@ -31,13 +36,22 @@ runs:
       shell: bash
       run: npm run build
 
-    - name: Zipping Build Package
-      working-directory: ./
-      shell: bash
-      run: zip -r -j package.zip ./dist/git-test/*
+    # - name: Zipping Build Package
+    #   working-directory: ./
+    #   shell: bash
+    #   run: zip -r -j package.zip ./dist/git-test/*
     
-    - name: Store Zip
-      uses: actions/upload-artifact@v3
-      with:
-        name: package
-        path: package.zip
+    # - name: Store Zip
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: package
+    #     path: package.zip
+
+    - name: Build, tag, and push image to DockerHub
+      working-directory: ./devops-repo/dockerFiles
+      shell: bash
+      env:
+        IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
+      run: |
+        docker build -t pranablodhnagarro/test-repo:$IMAGE_TAG -f .
+        docker push pranablodhnagarro/test-repo:$IMAGE_TAG

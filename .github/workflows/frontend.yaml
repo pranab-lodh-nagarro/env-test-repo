@@ -20,42 +20,41 @@ jobs:
       - name: Exit if not on develop branch
         if: endsWith(github.event.base_ref, 'develop') == false
         run: exit -1
-      - name: Getting Tag Value
-        run: |
-          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
       - name: Starting Angular Application Building
         uses: ./.github/actions/frontend/build-angular
+        with:
+          IMAGE_TAG: ${{  github.ref_name }}
   
-  deploy-dev:
-    name: Deploy to dev
-    needs: [build]
-    environment:
-      name: dev
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-      - name: Starting Angular Application Building
-        uses: ./.github/actions/frontend/deploy
-        with:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+  # deploy-dev:
+  #   name: Deploy to dev
+  #   needs: [build]
+  #   environment:
+  #     name: dev
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: develop
+  #     - name: Starting Angular Application Building
+  #       uses: ./.github/actions/frontend/deploy
+  #       with:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
 
-  deploy-test:
-    name: Deploy to test
-    needs: [build, deploy-dev]
-    environment:
-      name: test
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: develop
-      - name: Starting Angular Application Building
-        uses: ./.github/actions/frontend/deploy
-        with:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+  # deploy-test:
+  #   name: Deploy to test
+  #   needs: [build, deploy-dev]
+  #   environment:
+  #     name: test
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: develop
+  #     - name: Starting Angular Application Building
+  #       uses: ./.github/actions/frontend/deploy
+  #       with:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
