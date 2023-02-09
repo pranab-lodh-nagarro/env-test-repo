@@ -52,6 +52,6 @@ runs:
       env:
         IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
       run: |
-        docker login -u pranablodhnagarro -p Bumb@9804710805
+        docker login -u pranablodhnagarro -p Bumb@98047
         docker build -t pranablodhnagarro/test-repo:$IMAGE_TAG .
         docker push pranablodhnagarro/test-repo:$IMAGE_TAG
