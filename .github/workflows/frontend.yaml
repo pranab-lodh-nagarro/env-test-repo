@@ -20,9 +20,9 @@ jobs:
       - name: Exit if not on develop branch
         if: endsWith(github.event.base_ref, 'develop') == false
         run: exit -1
-      - name: Getting Enviromnet Variables
+      - name: Getting Tag Value
         run: |
-          echo ${{ needs.tagging.outputs.TAG}}
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
       - name: Starting Angular Application Building
         uses: ./.github/actions/frontend/build-angular
   
