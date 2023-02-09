@@ -1,0 +1,39 @@
+name: Deployment Pipeline Angular
+on: 
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build Angular Application
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Starting Angular Application Building
+        uses: ./.github/actions/frontend/build-angular
+  
+  deploy-dev:
+    name: Deploy to dev
+    environment:
+      name: dev
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Starting Angular Application Building
+        uses: ./.github/actions/frontend/deploy
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+
+  deploy-test:
+    name: Deploy to test
+    environment:
+      name: test
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Starting Angular Application Building
+        uses: ./.github/actions/frontend/deploy
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}

@@ -1,0 +1,43 @@
+name: Build Angular Application
+description: Build Angular Application
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node & NPM
+      uses: actions/setup-node@v3
+      with:
+        node-version: "18.x"
+
+    - name: Set up Cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    - name: NPM Install
+      working-directory: ./
+      shell: bash
+      run: npm install
+
+    - name: NPM Install Angular
+      working-directory: ./
+      shell: bash
+      run: npm install -g @angular/cli > /dev/null
+
+    - name: NPM build Angular Application
+      working-directory: ./
+      shell: bash
+      run: npm run build
+
+    - name: Zipping Build Package
+      working-directory: ./
+      shell: bash
+      run: zip -r -j package.zip ./dist/git-test/*
+    
+    - name: Store Zip
+      uses: actions/upload-artifact@v3
+      with:
+        name: package
+        path: package.zip
