@@ -18,14 +18,14 @@ jobs:
       - name: Getting the Tag
         id: tag
         run: |
-          TAG=$(git describe ${{ github.sha }})
+          TAG=$(git describe --tags --abbrev=0)
           if [ ${{ github.event_name }} == 'workflow_dispatch' ]; then
             echo "TAG=${{ github.event.inputs.tags }}" >> $GITHUB_OUTPUT
           elif [ ${{ github.event_name }} == 'push' ] && [  TAG=~ "v-" ]; then
             echo "TAG=$TAG" >> $GITHUB_OUTPUT
           else
             echo "Tagging Failed"
-            exit 1  
+            throw "Tagging Failed"
           fi
 
   build:
