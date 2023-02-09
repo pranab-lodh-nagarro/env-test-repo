@@ -21,7 +21,6 @@ runs:
         mkdir ${{ inputs.S3_BUCKET_NAME }}
 
     - name: Download Zip
-      working-directory: ./
       uses: actions/download-artifact@v3
       with:
         name: package
