@@ -48,7 +48,6 @@ runs:
     #     path: package.zip
 
     - name: Build, tag, and push image to DockerHub
-      working-directory: ./devops-repo/dockerFiles
       shell: bash
       env:
         IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
