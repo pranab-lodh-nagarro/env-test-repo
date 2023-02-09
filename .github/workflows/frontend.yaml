@@ -17,13 +17,15 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: develop
+      - name: Echo Branch
+        run: echo github.event.base_ref
       - name: Exit if not on develop branch
         if: endsWith(github.event.base_ref, 'develop') == false
         run: exit -1
       - name: Starting Angular Application Building
         uses: ./.github/actions/frontend/build-angular
         with:
-          IMAGE_TAG: ${{  github.ref_name }}
+          IMAGE_TAG: ${{ github.ref_name }}
   
   # deploy-dev:
   #   name: Deploy to dev
