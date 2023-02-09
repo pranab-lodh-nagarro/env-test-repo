@@ -3,12 +3,39 @@ on:
   push:
     branches: [ develop ]
   workflow_dispatch:
+    inputs:
+      tags:
+        description: Tag
+        required: true 
+        type: string
 jobs:
+  tagging:
+    name: Getting the Tag
+    runs-on: ubuntu-20.04
+    outputs:
+      TAG: ${{ steps.tag.outputs.TAG }}
+    steps:
+      - name: Getting the Tag
+        id: tag
+        run: |
+          if [ ${{ github.event_name }} == 'workflow_dispatch' ]; then
+            echo "TAG=${{ github.event.inputs.tags }}" >> $GITHUB_OUTPUT
+          elif [ ${{ github.event_name }} == 'push' ] && [ git describe ${{ github.sha }} =~ "v-" ]; then
+            echo "TAG=${{ git describe ${{ github.sha }} }}" >> $GITHUB_OUTPUT
+          else
+            echo "Tagging Failed"
+            exit 1  
+          fi
+
   build:
     name: Build Angular Application
+    needs: [tagging]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - name: Getting Enviromnet Variables
+        run: |
+          echo ${{ needs.tagging.outputs.TAG}}
       - name: Starting Angular Application Building
         uses: ./.github/actions/frontend/build-angular
   
