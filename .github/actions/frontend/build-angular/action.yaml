@@ -52,5 +52,5 @@ runs:
       env:
         IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
       run: |
-        docker build -t pranablodhnagarro/test-repo:$IMAGE_TAG -f .
+        docker build -t pranablodhnagarro/test-repo:$IMAGE_TAG .
         docker push pranablodhnagarro/test-repo:$IMAGE_TAG
